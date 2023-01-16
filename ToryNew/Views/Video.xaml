@@ -1,0 +1,239 @@
+﻿<!-- Copyright (c) Microsoft Corporation and Contributors. -->
+<!-- Licensed under the MIT License. -->
+
+<Page
+    x:Class="Tory.Views.Video"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:labs="using:CommunityToolkit.Labs.WinUI"
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:ui="using:CommunityToolkit.WinUI.UI"
+    xmlns:local="using:ToryNew.Assets.FileProperties"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Page.Resources>
+        <DataTemplate x:Key="VideoSelection_ItemTemplate" x:DataType="local:VideoFileInfo">
+            <Grid Padding="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Image x:Name="ItemImage"
+                       Source="Assets/StoreLogo.png"
+                       Stretch="UniformToFill" />
+
+                <StackPanel Orientation="Vertical"
+                    Grid.Row="1" Padding="5">
+                    <TextBlock Text="{x:Bind VideoName}"
+                       HorizontalAlignment="Center"
+                       Style="{StaticResource SubtitleTextBlockStyle}" />
+                    <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center">
+                        <TextBlock Text="{x:Bind VideoFileType}"
+                           HorizontalAlignment="Center"
+                           Style="{StaticResource CaptionTextBlockStyle}" />
+                        <TextBlock Text="{x:Bind VideoDimensions}"
+                           HorizontalAlignment="Center"
+                           Style="{StaticResource CaptionTextBlockStyle}"
+                           Margin="8,0,0,0" />
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
+
+    <Grid Padding="10" ColumnSpacing="10">
+        <!--#region Grid Def-->
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.5*" />
+            <ColumnDefinition Width="0.5*" />
+        </Grid.ColumnDefinitions>
+        <!--#endregion Grid Def-->
+
+        <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
+            <Grid RowSpacing="10">
+                <!--#region Grid Def-->
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="246" />
+                    <RowDefinition Height="480" />
+                    <RowDefinition Height="150" />
+                    <RowDefinition Height="130" />
+                </Grid.RowDefinitions>
+                <!--#endregion Grid Def-->
+
+                <!--#region Step 1-->
+                <Border Grid.Row="0" Background="{ThemeResource CardBackgroundFillColorDefault}" CornerRadius="{ThemeResource GridViewItemCornerRadius}">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,0,10,0">
+                        <StackPanel Padding="10" Spacing="10">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Top"  HorizontalAlignment="Left" Spacing="15">
+                                <TextBlock Text="1" Opacity="0.6" FontSize="24" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                <TextBlock Text="Files Selection" Opacity="0.6" FontWeight="SemiBold" FontSize="18" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <labs:SettingsCard HeaderIcon="{ui:FontIcon FontFamily={StaticResource SymbolThemeFontFamily}, Glyph='&#xE8E5;'}" Header="File Browser">
+                                <labs:SettingsCard.Description>
+                                    <TextBlock>
+                                Click <Bold>Browse Files</Bold> to select the files you wish to convert.
+                                A new window dialog will appear for you to choose from.
+                                    </TextBlock>
+                                </labs:SettingsCard.Description>
+                                <Button Content="Browse Files" Click="BrowseFiles" Style="{StaticResource AccentButtonStyle}"/>
+                            </labs:SettingsCard>
+                            <labs:SettingsCard HeaderIcon="{ui:FontIcon FontFamily={StaticResource SymbolThemeFontFamily}, Glyph='&#xE8B7;'}" Header="Folder Browser">
+                                <labs:SettingsCard.Description>
+                                    <TextBlock>
+                                Click <Bold>Browse Folder</Bold> to select the folder you wish to convert.
+                                A new window dialog will appear for you to choose from.
+                                    </TextBlock>
+                                </labs:SettingsCard.Description>
+                                <Button Content="Browse Folder" Click="BrowseFolder" Style="{StaticResource AccentButtonStyle}" />
+                            </labs:SettingsCard>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Border>
+                <!--#endregion Step 1-->
+
+                <!--#region  Step 2-->
+                <Border Grid.Row="1" Background="{ThemeResource CardBackgroundFillColorDefault}" CornerRadius="{ThemeResource GridViewItemCornerRadius}">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,0,10,0">
+                        <StackPanel Spacing="10" Padding="10" x:Name="SettingsStep2">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Top"  HorizontalAlignment="Left" Spacing="10" Name="SkipMe4">
+                                <TextBlock Text="2" Opacity="0.6" FontSize="24" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                <TextBlock Text="Files Conversion Settings" Opacity="0.6" FontWeight="SemiBold" FontSize="18" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <labs:SettingsCard HeaderIcon="{ui:FontIcon FontFamily={StaticResource SymbolThemeFontFamily}, Glyph='&#xE8CB;'}" Header="Format Selection" Description="Select the format you wish the files will converto to">
+                                <ComboBox x:Name="FormatSelectionCombo" HorizontalAlignment="Right" SelectionChanged="FormatSelectionChanged" />
+                            </labs:SettingsCard>
+                            <labs:SettingsCard x:Name="PreserveFileSetting" HeaderIcon="{ui:FontIcon FontFamily={StaticResource SymbolThemeFontFamily}, Glyph='&#xE74E;'}" Header="Preserve Files Settings" Description="Will preserve each files settings and will change the format to the selected one (will reduce conversion time)">
+                                <ToggleSwitch IsOn="True" x:Name="PreserveFileSettingsToggle" Toggled="PreserveFileSettingsToggle_Toggled" />
+                            </labs:SettingsCard>
+                            <StackPanel x:Name="NotPreservedSettingsPanel" Spacing="10">
+                                <labs:SettingsCard x:Name="QualitySelectionSetting" HeaderIcon="{ui:FontIcon FontFamily={StaticResource SymbolThemeFontFamily}, Glyph='&#xE8B8;'}" Header="Quality Selection" Description="Select the desired quality from the drop down menu">
+                                    <ComboBox x:Name="QualitySelectionCombo" SelectedIndex="0" HorizontalAlignment="Left">
+                                        <ComboBox.Items>
+                                            <ComboBoxItem Content="1080p"/>
+                                            <ComboBoxItem Content="720p"/>
+                                            <ComboBoxItem Content="480p"/>
+                                        </ComboBox.Items>
+                                    </ComboBox>
+                                </labs:SettingsCard>
+
+                                <labs:SettingsCard Name="BitrateSetting" HeaderIcon="{ui:FontIcon FontFamily={StaticResource SymbolThemeFontFamily}, Glyph='&#xE774;'}" Header="Bitrate Slider" Description="Slide the bitrate slider until the desired amount is reached (1 - 100 Mb/s)">
+                                    <StackPanel x:Name="BitratePanel">
+                                        <StackPanel Orientation="Horizontal" Spacing="10">
+                                            <TextBlock Text="Video Bitrate"/>
+                                            <StackPanel Orientation="Horizontal" x:Name="BitrateTextPanel">
+                                                <TextBlock Text="{Binding ElementName=SliderBitrate,Path=Value}" FontWeight="SemiBold"/>
+                                                <TextBlock Text="Mb/s" FontWeight="SemiBold"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                        <StackPanel x:Name="SliderBitratePanel">
+                                            <Slider Minimum="1" Maximum="100" x:Name="SliderBitrate" Value="12" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                </labs:SettingsCard>
+
+                                <labs:SettingsCard HeaderIcon="{ui:FontIcon FontFamily={StaticResource SymbolThemeFontFamily}, Glyph='&#xE8FC;'}" Header="Frames Per Second" Description="Choose between 24, 30 and 60 frames per second">
+                                    <StackPanel x:Name="FPSPanel">
+                                        <ComboBox x:Name="FPSCombo" Grid.Column="1" Grid.Row="4" SelectedIndex="0" HorizontalAlignment="Left">
+                                            <ComboBox.Items>
+                                                <ComboBoxItem Content="60"/>
+                                                <ComboBoxItem Content="30"/>
+                                                <ComboBoxItem Content="24"/>
+                                            </ComboBox.Items>
+                                        </ComboBox>
+                                    </StackPanel>
+                                </labs:SettingsCard>
+                            </StackPanel>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Border>
+                <!--#endregion  Step 2-->
+
+                <!--#region Step 3-->
+                <Border Grid.Row="2" Background="{ThemeResource CardBackgroundFillColorDefault}" CornerRadius="{ThemeResource GridViewItemCornerRadius}">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,0,10,0">
+                        <StackPanel Padding="10" Spacing="10" x:Name="SettingsStep3">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Top"  HorizontalAlignment="Left" Spacing="10" Name="SkipMe2">
+                                <TextBlock Text="3" Opacity="0.6" FontSize="24" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                <TextBlock Text="Save Folder Location" Opacity="0.6" FontWeight="SemiBold" FontSize="18" VerticalAlignment="Center"/>
+                            </StackPanel>
+
+                            <labs:SettingsCard HeaderIcon="{ui:FontIcon FontFamily={StaticResource SymbolThemeFontFamily}, Glyph='&#xE8F1;'}" Header="Save Folder">
+                                <labs:SettingsCard.Description>
+                                    <StackPanel x:Name="SkipMe3">
+                                        <StackPanel Orientation="Horizontal" Spacing="10">
+                                            <TextBlock Text="Video Number: " Foreground="Gray" />
+                                            <TextBlock x:Name="VideoNumberText" Foreground="Gray" />
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Spacing="10">
+                                            <TextBlock Text="Selected Path: " Foreground="Gray"/>
+                                            <TextBlock x:Name="saveFolderTextBlock" Foreground="Gray"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </labs:SettingsCard.Description>
+                                <Button Content="Browse Folder" HorizontalContentAlignment="Center" Click="SaveFolder" Style="{StaticResource AccentButtonStyle}"/>
+                            </labs:SettingsCard>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Border>
+
+                <Border Grid.Row="3" Background="{ThemeResource CardBackgroundFillColorDefault}" CornerRadius="{ThemeResource GridViewItemCornerRadius}">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,0,10,0">
+                        <StackPanel x:Name="SettingsStep4" Padding="10" Spacing="10" >
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Top"  HorizontalAlignment="Left" Spacing="10" Name="SkipMe">
+                                <TextBlock Text="4" Opacity="0.6" FontSize="24" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                <TextBlock Text="Start Conversion" Opacity="0.6" FontWeight="SemiBold" FontSize="18" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <labs:SettingsCard HeaderIcon="{ui:FontIcon FontFamily={StaticResource SymbolThemeFontFamily}, Glyph='&#xE768;'}" Header="Conversion">
+                                <labs:SettingsCard.Description>
+                                    <TextBlock>
+                            Click <Bold>Start Converting</Bold> to generate the final videos in the specified folder.
+                                    </TextBlock>
+                                </labs:SettingsCard.Description>
+                                <Button Content="Start Converting" Click="StartConversionButton" Style="{StaticResource AccentButtonStyle}"/>
+                            </labs:SettingsCard>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Border>
+            </Grid>
+        </ScrollViewer>
+
+        <!-- Video Selection Viewer -->
+        <Border Grid.Column="1" Background="{ThemeResource CardBackgroundFillColorDefault}" CornerRadius="{ThemeResource GridViewItemCornerRadius}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="0.45*"/>
+                    <RowDefinition Height="0.55*"/>
+                </Grid.RowDefinitions>
+
+                <MediaPlayerElement Grid.Row="0" x:Name="MediaPlayer" AreTransportControlsEnabled="False">
+                    <MediaPlayerElement.TransportControls>
+                        <MediaTransportControls
+                            IsCompact="True"
+                            IsZoomButtonVisible="False"
+                            IsZoomEnabled="False"
+                            />
+                    </MediaPlayerElement.TransportControls>
+                </MediaPlayerElement>
+                <controls:AdaptiveGridView Grid.Row="1"
+                                   StretchContentForSingleRow="False"
+                                   OneRowModeEnabled="False"
+                                   IsMultiSelectCheckBoxEnabled="False"
+                                   ItemHeight="200"
+                                   DesiredWidth="300"
+                                   SelectionMode="Single"
+                                   IsItemClickEnabled="True"
+                                   x:Name="VideoSelectionAdaptiveGrid"
+                                   ItemTemplate="{StaticResource VideoSelection_ItemTemplate}"
+                                   ContainerContentChanging="VideoSelectionView_ContainerContentChanging"
+                                   SelectionChanged="VideoSelectionAdaptiveGrid_SelectionChanged"
+                                   >
+                </controls:AdaptiveGridView>
+            </Grid>
+        </Border>
+    </Grid>
+</Page>

@@ -1,0 +1,77 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <RootNamespace>ToryNew</RootNamespace>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Platforms>x86;x64;ARM64</Platforms>
+    <RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
+    <UseWinUI>true</UseWinUI>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Remove="Assets\AppSettings.cs" />
+    <Content Remove="Assets\AppSettings\AppSettings.cs" />
+    <Content Remove="Assets\AppSettings\Setting.cs" />
+    <Content Remove="Assets\Enums\ConversionMethod.cs" />
+    <Content Remove="Assets\Enums\ThemeSelection.cs" />
+    <Content Remove="Assets\Enums\VideoFormat.cs" />
+    <Content Remove="Assets\FileProperties\VideoFileInfo.cs" />
+    <Content Remove="Assets\icomoon.ttf" />
+    <Content Remove="Assets\ImageFileInfo.cs" />
+    <Content Remove="Assets\Media\video1.mp4" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Views\SettingsViews\Audio.xaml" />
+    <None Remove="Views\SettingsViews\Document.xaml" />
+    <None Remove="Views\SettingsViews\General.xaml" />
+    <None Remove="Views\SettingsViews\Image.xaml" />
+    <None Remove="Views\SettingsViews\Video.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Common" Version="8.0.0" />
+    <PackageReference Include="CommunityToolkit.Labs.WinUI.SettingsControls" Version="0.0.10" />
+    <PackageReference Include="CommunityToolkit.WinUI" Version="7.1.2" />
+    <PackageReference Include="CommunityToolkit.WinUI.UI" Version="7.1.2" />
+    <PackageReference Include="CommunityToolkit.WinUI.UI.Controls" Version="7.1.2" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.221109.1" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
+    <PackageReference Include="xFFmpeg.NET" Version="7.1.3" />
+    <Manifest Include="$(ApplicationManifest)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Views\SettingsViews\General.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Views\SettingConversionViews\Document.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Views\SettingConversionViews\Audio.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Views\SettingConversionViews\Image.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Views\SettingConversionViews\Video.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Assets\Samples\" />
+  </ItemGroup>
+</Project>

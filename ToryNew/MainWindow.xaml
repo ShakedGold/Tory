@@ -1,0 +1,40 @@
+<!-- Copyright (c) Microsoft Corporation and Contributors. -->
+<!-- Licensed under the MIT License. -->
+
+<Window
+    x:Class="ToryNew.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ToryNew"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    >
+
+    <!-- Main Viewer -->
+    <Grid>
+        <!-- Navigation menu for the different conversion types -->
+        <NavigationView x:Name="NavBar" IsSettingsVisible="False" OpenPaneLength="250" ItemInvoked="NavBar_ItemInvoked" Loaded="NavBar_Loaded">
+            <NavigationView.MenuItems>
+                <NavigationViewItemHeader Content="Conversion Categories"/>
+                <NavigationViewItem Icon="Video" Content="Video Conversion" Tag="Video" />
+                <NavigationViewItem Icon="Camera" Content="Image Conversion" Tag="Image" />
+                <NavigationViewItem Icon="Audio" Content="Audio Conversion" Tag="Audio" />
+                <NavigationViewItem Icon="Document" Content="Document Conversion" Tag="Document" />
+            </NavigationView.MenuItems>
+
+            <!-- Settings (Did not use the build in ones because I wanted to change the icon) -->
+            <NavigationView.FooterMenuItems>
+                <NavigationViewItemHeader Content="Settings"/>
+                <NavigationViewItem Content="Settings" Tag="Settings">
+                    <NavigationViewItem.Icon>
+                        <ImageIcon Source="Assets/Icons/Settings.png"></ImageIcon>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+            </NavigationView.FooterMenuItems>
+
+            <!-- Depending on what is selected the viewer will show programatically -->
+            <Frame x:Name="ContentFrame" />
+        </NavigationView>
+    </Grid>
+</Window>
