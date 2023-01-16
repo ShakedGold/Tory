@@ -14,6 +14,21 @@ The all in one file converter, from videos to documents, this program can conver
 
 ![Video Conversion Section](/Screenshots/VideoConversion.png)
 
+## Build & Run Locally
+Clone this repository
+```bash
+git clone https://github.com/ShakedGold/Tory
+```
+
+Open the .sln file in Visual Studio
+```bash
+start ToryNew.sln
+```
+
+Make sure all of the APIs are installed correctly
+
+Click on the Start button
+
 
 ## APIs Used
 
