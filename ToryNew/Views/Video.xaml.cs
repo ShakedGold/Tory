@@ -332,7 +332,7 @@ namespace Tory.Views {
                 PreserveFileSettingsToggle.IsOn = false;
                 DisableOrEnable(NotPreservedSettingsPanel, true);
             } else {
-                PreserveFileSetting.IsEnabled = !PreserveFileSettingsToggle.IsOn;
+                PreserveFileSetting.IsEnabled = currentStep != 1;
                 DisableOrEnable(NotPreservedSettingsPanel, !PreserveFileSettingsToggle.IsOn);
             }
         }
