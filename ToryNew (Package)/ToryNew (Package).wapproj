@@ -91,10 +91,10 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Common" Version="8.0.0" />
-    <PackageReference Include="CommunityToolkit.Labs.WinUI.SettingsControls" Version="0.0.11" />
+    <PackageReference Include="CommunityToolkit.Labs.WinUI.SettingsControls" Version="0.0.12" />
     <PackageReference Include="CommunityToolkit.WinUI.UI.Controls" Version="7.1.2" />
     <PackageReference Include="Microsoft.UI.Xaml" Version="2.8.2-prerelease.220830001" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="[1.2.221109.1]">
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.221209.1">
       <IncludeAssets>build</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="[10.0.22621.755]">

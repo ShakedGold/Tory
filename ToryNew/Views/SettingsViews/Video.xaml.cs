@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Diagnostics;
 using Tory.Views;
+using Tory.Views.ConversionViews;
 using ToryNew.Assets.AppSettings;
 using ToryNew.Views.SettingsViews;
 using Windows.Storage;

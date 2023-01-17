@@ -13,31 +13,19 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using Tory.Views.ConversionViews;
-using ToryNew.Views.SettingsViews;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace ToryNew.Views.SettingConversionViews {
+namespace Tory.Views.ConversionViews {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class Audio : Page {
-        public Audio() {
+    public sealed partial class Document : Page {
+        public Document() {
             this.InitializeComponent();
-
-            MainWindow.navigationView.IsBackEnabled = true;
-            MainWindow.navigationView.BackRequested += NavBar_BackRequested;
-            MainWindow.navigationView.IsBackButtonVisible = NavigationViewBackButtonVisible.Visible;
-        }
-        private void NavBar_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args) {
-            Settings.NavigateToView(typeof(General));
-            MainWindow.navigationView.IsBackEnabled = false;
-            MainWindow.navigationView.BackRequested -= NavBar_BackRequested;
-            MainWindow.navigationView.IsBackButtonVisible = NavigationViewBackButtonVisible.Collapsed;
         }
     }
 }

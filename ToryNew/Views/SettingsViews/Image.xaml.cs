@@ -14,6 +14,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Tory.Views;
+using Tory.Views.ConversionViews;
 using ToryNew.Views.SettingsViews;
 using Windows.Foundation;
 using Windows.Foundation.Collections;

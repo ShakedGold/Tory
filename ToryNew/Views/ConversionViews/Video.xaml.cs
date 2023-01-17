@@ -22,6 +22,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using ToryNew;
 using ToryNew.Assets.FileProperties;
+using ToryNew.UserControls;
 using Windows.ApplicationModel;
 using Windows.Graphics.Imaging;
 using Windows.Media.Core;
@@ -35,7 +36,7 @@ using WinRT.Interop;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace Tory.Views {
+namespace Tory.Views.ConversionViews {
 
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
@@ -64,9 +65,9 @@ namespace Tory.Views {
             PreserveFileSettingsToggle.IsOn = true;
 
             // disable all of the steps other than the first (2 - 4) to prevent changing the settings and starting the conversion before there are any files
-            DisableOrEnable(SettingsStep2, false);
-            DisableOrEnable(SettingsStep3, false);
-            DisableOrEnable(SettingsStep4, false);
+            DisableOrEnable(Step2, false);
+            DisableOrEnable(Step3, false);
+            DisableOrEnable(Step4, false);
         }
 
         // The event for the button that will pick the files in step 1
@@ -149,10 +150,13 @@ namespace Tory.Views {
 
             if (currentStep >= 4) return;
             currentStep = 4;
-            DisableOrEnable(SettingsStep4, true);
+            DisableOrEnable(Step4, true);
         }
 
         // loop through every Control / TextBlock and Disable/Enable it accordingly, if is StackPanel then do the same method inside of the StackPanel
+        private void DisableOrEnable(Step panel, bool enableOrDisable) {
+            panel.IsEnabled = enableOrDisable;
+        }
         private void DisableOrEnable(StackPanel panel, bool enableOrDisable) {
             if (panel == null) return;
             var controls = panel.Children.Where(s => { return s is Control; });
@@ -160,10 +164,10 @@ namespace Tory.Views {
             var stackPanels = panel.Children.Where(s => { return s is StackPanel; });
 
             foreach (var c in controls) {
-                if(c is SettingsCard) {
+                if (c is SettingsCard) {
                     SettingsCard s = (SettingsCard)c;
                     DisableOrEnable(s.Content as StackPanel, enableOrDisable);
-                }          
+                }
                 ((Control)c).IsEnabled = enableOrDisable;
             }
             foreach (var t in textBlocks) {
@@ -356,8 +360,9 @@ namespace Tory.Views {
             currentStep = 3;
 
             //enable the settings
-            DisableOrEnable(SettingsStep2, true);
-            DisableOrEnable(SettingsStep3, true);
+            DisableOrEnable(Step2, true);
+            DisableOrEnable(Step3, true);
+            PreserveFileSetting.IsEnabled = true;
             DisableOrEnable(NotPreservedSettingsPanel, false);
         }
 

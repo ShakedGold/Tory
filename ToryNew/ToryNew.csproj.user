@@ -8,25 +8,15 @@
     <None Update="MainWindow.xaml">
       <SubType>Designer</SubType>
     </None>
+    <Page Update="UserViewer\StepsViewer.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UserControls\Step.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Views\SettingsViews\General.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
-  <ItemGroup>
-    <Page Update="Views\Audio.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\Document.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\Image.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\Settings.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\Video.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-  </ItemGroup>
+  <ItemGroup />
 </Project>

@@ -36,6 +36,7 @@ namespace ToryNew {
         public MainWindow() {
             this.InitializeComponent();
 
+            Title = "Tory";
 
             navigationView = NavBar;
             NavigateToView(AppSettings.DefaultConversionMethod.ToString());
@@ -53,7 +54,7 @@ namespace ToryNew {
 
         //Getting the view itself
         private bool NavigateToView(string clickedView) {
-            var view = Assembly.GetExecutingAssembly().GetType($"Tory.Views.{clickedView}");
+            var view = Assembly.GetExecutingAssembly().GetType($"Tory.Views.ConversionViews.{clickedView}");
             if (string.IsNullOrWhiteSpace(clickedView)) return false;
             if (view == null) return false;
             ContentFrame.Navigate(view, null, new EntranceNavigationTransitionInfo());

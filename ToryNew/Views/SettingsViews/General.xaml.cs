@@ -6,9 +6,8 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Reflection;
-using Tory.Views;
 using ToryNew.Assets.AppSettings;
-using ToryNew.Views.SettingConversionViews;
+using Tory.Views.ConversionViews;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
