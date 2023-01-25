@@ -48,24 +48,23 @@ namespace ToryNew.Assets.FileProperties
 
         public async Task<BitmapImage> GetImageThumbnailAsync()
         {
-            StorageItemThumbnail thumbnail =
-                await ImageFile.GetThumbnailAsync(ThumbnailMode.VideosView, imageSize);
-            while (thumbnail == null || imageSize > 100)
-            {
-                imageSize -= 50;
-                thumbnail = await ImageFile.GetThumbnailAsync(ThumbnailMode.VideosView, imageSize);
+            StorageItemThumbnail thumbnail;
+            try {
+                thumbnail = await ImageFile.GetThumbnailAsync(ThumbnailMode.PicturesView, imageSize);
+            } catch (Exception e) {
+                thumbnail = null;
             }
             // Create a bitmap to be the image source.
             var bitmapImage = new BitmapImage();
-            if (thumbnail == null)
-            {
+            if (thumbnail == null) {
                 StorageFolder appInstalledFolder = Package.Current.InstalledLocation;
                 StorageFolder picturesFolder = await appInstalledFolder.GetFolderAsync("Assets\\Samples");
-                StorageFile file = await StorageFile.GetFileFromPathAsync($"{picturesFolder.Path}\\image1.jpg");
+                StorageFile file = await StorageFile.GetFileFromPathAsync($"{picturesFolder.Path}\\placeholderAudio.png");
                 bitmapImage.SetSource(await file.GetThumbnailAsync(ThumbnailMode.PicturesView));
+            } else {
+                bitmapImage.SetSource(thumbnail);
+                thumbnail.Dispose();
             }
-            else bitmapImage.SetSource(thumbnail);
-            thumbnail.Dispose();
 
             return bitmapImage;
         }

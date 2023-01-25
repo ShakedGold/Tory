@@ -6,7 +6,9 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:ToryNew.UserControls"
+    xmlns:data="using:ToryNew.Assets.FileProperties"
     xmlns:viewer="using:ToryNew.UserViewer"
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:labs="using:CommunityToolkit.Labs.WinUI"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -14,15 +16,44 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <Page.Resources>
+        <DataTemplate x:Key="AudioSelection_ItemTemplate" x:DataType="data:AudioFileInfo">
+            <Grid Padding="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Image x:Name="ItemImage"
+                       Source="Assets/StoreLogo.png"
+                       Stretch="Uniform" />
+
+                <StackPanel Orientation="Vertical"
+                    Grid.Row="1" Padding="5">
+                    <TextBlock Text="{x:Bind AudioName}"
+                       HorizontalAlignment="Center"
+                       Style="{StaticResource SubtitleTextBlockStyle}" />
+                    <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center">
+                        <TextBlock Text="{x:Bind AudioFileType}"
+                           HorizontalAlignment="Center"
+                           Style="{StaticResource CaptionTextBlockStyle}" />
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
+
     <Grid Padding="10" ColumnSpacing="10">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.45*"/>
             <ColumnDefinition Width="0.55*"/>
         </Grid.ColumnDefinitions>
-        
-        <viewer:StepsViewer>
+
+        <viewer:StepsViewer Grid.Column="0" x:Name="StepsViewer" Spacing="25" StepSpacing="10">
             <viewer:StepsViewer.Items>
 
+                <!-- Step 1 -->
                 <local:Step Header="Files Selection" StepNumber="1">
                     <local:Step.Items>
                         <labs:SettingsCard HeaderIcon="{ui:FontIcon FontFamily={StaticResource SymbolThemeFontFamily}, Glyph='&#xE8E5;'}" Header="File Browser">
@@ -32,7 +63,7 @@
                                 A new window dialog will appear for you to choose from.
                                 </TextBlock>
                             </labs:SettingsCard.Description>
-                            <Button Content="Browse Files" Style="{StaticResource AccentButtonStyle}"/>
+                            <Button Content="Browse Files" Style="{StaticResource AccentButtonStyle}" Click="BrowseFiles"/>
                         </labs:SettingsCard>
                         <labs:SettingsCard HeaderIcon="{ui:FontIcon FontFamily={StaticResource SymbolThemeFontFamily}, Glyph='&#xE8B7;'}" Header="Folder Browser">
                             <labs:SettingsCard.Description>
@@ -41,12 +72,115 @@
                                 A new window dialog will appear for you to choose from.
                                 </TextBlock>
                             </labs:SettingsCard.Description>
-                            <Button Content="Browse Folder" Style="{StaticResource AccentButtonStyle}" />
+                            <Button Content="Browse Folder" Style="{StaticResource AccentButtonStyle}" Click="BrowseFolder"/>
+                        </labs:SettingsCard>
+                    </local:Step.Items>
+                </local:Step>
+                
+                <!-- Step 2 -->
+                <local:Step Header="Audio Conversion Settings" StepNumber="2">
+                    <local:Step.Items>
+                        <labs:SettingsCard HeaderIcon="{ui:FontIcon FontFamily={StaticResource SymbolThemeFontFamily}, Glyph='&#xE8CB;'}" Header="Format Selection" Description="Select the format you wish the files will convert to">
+                            <ComboBox x:Name="FormatSelectionCombo" HorizontalAlignment="Right" />
+                        </labs:SettingsCard>
+                        
+                        <labs:SettingsCard x:Name="PreserveFileSetting" HeaderIcon="{ui:FontIcon FontFamily={StaticResource SymbolThemeFontFamily}, Glyph='&#xE74E;'}" Header="Preserve Files Settings" Description="Will preserve each files settings and will change the format to the selected one (will reduce conversion time)">
+                            <ToggleSwitch x:Name="PreserveFileSettingsToggle" Toggled="PreserveFileSettingsToggle_Toggled" />
+                        </labs:SettingsCard>
+
+                        <StackPanel x:Name="NotPreservedSettingsPanel" Spacing="10">
+                            <labs:SettingsCard Name="BitrateSetting" HeaderIcon="{ui:FontIcon FontFamily={StaticResource SymbolThemeFontFamily}, Glyph='&#xE774;'}" Header="Bitrate Slider" Description="Slide the bitrate slider until the desired amount is reached (1 - 100 Mb/s)">
+                                <StackPanel x:Name="BitratePanel">
+                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                        <TextBlock Text="Audio Bitrate"/>
+                                        <StackPanel Orientation="Horizontal" x:Name="BitrateTextPanel">
+                                            <TextBlock Text="{Binding ElementName=SliderBitrate,Path=Value}" FontWeight="SemiBold"/>
+                                            <TextBlock Text="Kb/s" FontWeight="SemiBold"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                    <StackPanel x:Name="SliderBitratePanel">
+                                        <Slider Minimum="1" Maximum="320" x:Name="SliderBitrate" Value="128" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </labs:SettingsCard>
+
+                            <labs:SettingsCard HeaderIcon="{ui:FontIcon FontFamily={StaticResource SymbolThemeFontFamily}, Glyph='&#xE8D6;'}" Header="Audio Channel" Description="Set the Audio channel to Mono/Stereo">
+                                <ToggleSwitch IsOn="False" OnContent="Mono" OffContent="Stereo"/>
+                            </labs:SettingsCard>
+                        </StackPanel>
+                    </local:Step.Items>
+                </local:Step>
+
+                <!-- Step 3 -->
+                <local:Step Header="Save Folder Location" StepNumber="3" x:Name="Step3">
+                    <local:Step.Items>
+                        <labs:SettingsCard HeaderIcon="{ui:FontIcon FontFamily={StaticResource SymbolThemeFontFamily}, Glyph='&#xE8F1;'}" Header="Save Folder">
+                            <labs:SettingsCard.Description>
+                                <StackPanel>
+                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                        <TextBlock Text="Audio Number: " Foreground="Gray" />
+                                        <TextBlock x:Name="AudioNumberText" Foreground="Gray" />
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                        <TextBlock Text="Selected Path: " Foreground="Gray"/>
+                                        <TextBlock x:Name="saveFolderTextBlock" Foreground="Gray"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </labs:SettingsCard.Description>
+                            <Button Content="Browse Folder" Click="SaveFolder" HorizontalContentAlignment="Center" Style="{StaticResource AccentButtonStyle}"/>
+                        </labs:SettingsCard>
+                    </local:Step.Items>
+                </local:Step>
+
+                <!-- Step 4 -->
+                <local:Step Header="Start Conversion" StepNumber="4" x:Name="Step4">
+                    <local:Step.Items>
+                        <labs:SettingsCard HeaderIcon="{ui:FontIcon FontFamily={StaticResource SymbolThemeFontFamily}, Glyph='&#xE768;'}" Header="Conversion">
+                            <labs:SettingsCard.Description>
+                                <TextBlock>
+                                    Click <Bold>Start Converting</Bold> to generate the final audio files in the specified folder.
+                                </TextBlock>
+                            </labs:SettingsCard.Description>
+                            <Button Content="Start Converting" Click="StartConversionButton" Style="{StaticResource AccentButtonStyle}"/>
                         </labs:SettingsCard>
                     </local:Step.Items>
                 </local:Step>
 
             </viewer:StepsViewer.Items>
         </viewer:StepsViewer>
+
+        <!-- Audio Selection Viewer -->
+        <Border Grid.Column="1" Background="{ThemeResource CardBackgroundFillColorDefault}" CornerRadius="{ThemeResource GridViewItemCornerRadius}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="0.45*"/>
+                    <RowDefinition Height="0.55*"/>
+                </Grid.RowDefinitions>
+
+                <MediaPlayerElement Grid.Row="0" x:Name="MediaPlayer" AreTransportControlsEnabled="False">
+                    <MediaPlayerElement.TransportControls>
+                        <MediaTransportControls
+                            IsCompact="True"
+                            IsZoomButtonVisible="False"
+                            IsZoomEnabled="False"
+                            />
+                    </MediaPlayerElement.TransportControls>
+                </MediaPlayerElement>
+                <controls:AdaptiveGridView Grid.Row="1"
+                                   StretchContentForSingleRow="False"
+                                   OneRowModeEnabled="False"
+                                   IsMultiSelectCheckBoxEnabled="False"
+                                   ItemHeight="200"
+                                   DesiredWidth="300"
+                                   SelectionMode="Single"
+                                   IsItemClickEnabled="True"
+                                   x:Name="AudioSelectionAdaptiveGrid"
+                                   ItemTemplate="{StaticResource AudioSelection_ItemTemplate}"
+                                   ContainerContentChanging="AudioSelectionAdaptiveGrid_ContainerContentChanging"
+                                   SelectionChanged="AudioSelectionAdaptiveGrid_SelectionChanged"
+                                   >
+                </controls:AdaptiveGridView>
+            </Grid>
+        </Border>
     </Grid>
 </Page>

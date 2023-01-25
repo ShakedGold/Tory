@@ -13,10 +13,14 @@
     <Content Remove="Assets\AppSettings.cs" />
     <Content Remove="Assets\AppSettings\AppSettings.cs" />
     <Content Remove="Assets\AppSettings\Setting.cs" />
+    <Content Remove="Assets\Enums\AudioFormat.cs" />
     <Content Remove="Assets\Enums\ConversionMethod.cs" />
     <Content Remove="Assets\Enums\ThemeSelection.cs" />
     <Content Remove="Assets\Enums\VideoFormat.cs" />
+    <Content Remove="Assets\FileProperties\AudioFileInfo.cs" />
     <Content Remove="Assets\FileProperties\VideoFileInfo.cs" />
+    <Content Remove="Assets\Helper\BrowseHelper.cs" />
+    <Content Remove="Assets\Helper\StepHelper.cs" />
     <Content Remove="Assets\icomoon.ttf" />
     <Content Remove="Assets\ImageFileInfo.cs" />
     <Content Remove="Assets\Media\video1.mp4" />
@@ -71,10 +75,6 @@
     <Page Update="Views\SettingConversionViews\Video.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Assets\Samples\" />
   </ItemGroup>
 
   <ItemGroup>

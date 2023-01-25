@@ -26,12 +26,34 @@ using Windows.Foundation.Collections;
 namespace ToryNew.UserControls {
     public sealed partial class Step : UserControl {
         public int StepNumber { get; set; }
+        public int Spacing { get; set; }
         public string Header { get; set; }
         public ObservableCollection<object> Items { get; set; } = new ObservableCollection<object>();
 
+        public int currentStep { get; set; }
+        public bool IsCurrentStep {
+            get {
+                return StepNumber <= currentStep;
+            }
+        }
         public Step() {
             this.InitializeComponent();
             this.DataContext = this;
+
+            Debug.WriteLine("Spacing: " + Spacing);
+        }
+
+        public static void SetCurrentStep(ObservableCollection<Step> steps, int currStep) {
+            foreach (var step in steps) {
+                step.currentStep = currStep;
+                step.StepControl.IsEnabled = step.IsCurrentStep;
+            }
+        }
+
+        public static void SetStepSpacing(ObservableCollection<Step> steps, int spacing) {
+            foreach (var step in steps) {
+                step.Spacing = spacing;
+            }
         }
     }
 }

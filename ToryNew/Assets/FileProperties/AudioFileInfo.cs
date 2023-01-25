@@ -15,28 +15,28 @@ using Windows.Storage.Provider;
 
 namespace ToryNew.Assets.FileProperties
 {
-    public class VideoFileInfo : INotifyPropertyChanged
+    public class AudioFileInfo : INotifyPropertyChanged
     {
         private uint imageSize;
-        public VideoFileInfo(VideoProperties properties,
-            StorageFile imageFile,
+        public AudioFileInfo(MusicProperties properties,
+            StorageFile audioFile,
             string name,
             string type)
         {
-            VideoProperties = properties;
-            VideoName = name;
-            VideoFileType = type;
-            VideoFile = imageFile;
+            AudioProperties = properties;
+            AudioName = name;
+            AudioFileType = type;
+            AudioFile = audioFile;
             imageSize = 600;
         }
 
-        public StorageFile VideoFile { get; }
+        public StorageFile AudioFile { get; }
 
-        public VideoProperties VideoProperties { get; }
+        public MusicProperties AudioProperties { get; }
 
         public async Task<BitmapImage> GetImageSourceAsync()
         {
-            using IRandomAccessStream fileStream = await VideoFile.OpenReadAsync();
+            using IRandomAccessStream fileStream = await AudioFile.OpenReadAsync();
 
             // Create a bitmap to be the image source.
             BitmapImage bitmapImage = new();
@@ -49,18 +49,20 @@ namespace ToryNew.Assets.FileProperties
         {
             StorageItemThumbnail thumbnail;
             try {
-                thumbnail = await VideoFile.GetThumbnailAsync(ThumbnailMode.VideosView, imageSize);
-            } catch (Exception e) {
+                thumbnail = await AudioFile.GetThumbnailAsync(ThumbnailMode.MusicView, imageSize);
+            } catch(Exception e) {
                 thumbnail = null;
             }
             // Create a bitmap to be the image source.
             var bitmapImage = new BitmapImage();
-            if (thumbnail == null) {
+            if (thumbnail == null)
+            {
                 StorageFolder appInstalledFolder = Package.Current.InstalledLocation;
                 StorageFolder picturesFolder = await appInstalledFolder.GetFolderAsync("Assets\\Samples");
                 StorageFile file = await StorageFile.GetFileFromPathAsync($"{picturesFolder.Path}\\placeholderAudio.png");
                 bitmapImage.SetSource(await file.GetThumbnailAsync(ThumbnailMode.PicturesView));
-            } else {
+            }
+            else {
                 bitmapImage.SetSource(thumbnail);
                 thumbnail.Dispose();
             }
@@ -68,21 +70,18 @@ namespace ToryNew.Assets.FileProperties
             return bitmapImage;
         }
 
-        public string VideoName { get; }
+        public string AudioName { get; }
 
-        public string VideoFileType { get; }
+        public string AudioFileType { get; }
 
-        public string VideoDimensions => $"{VideoProperties.Width} x {VideoProperties.Height}";
-
-        public string VideoTitle
-        {
-            get => string.IsNullOrEmpty(VideoProperties.Title) ? VideoName : VideoProperties.Title;
+        public string AudioTitle {
+            get => string.IsNullOrEmpty(AudioProperties.Title) ? AudioName : AudioProperties.Title;
             set
             {
-                if (VideoProperties.Title != value)
+                if (AudioProperties.Title != value)
                 {
-                    VideoProperties.Title = value;
-                    _ = VideoProperties.SavePropertiesAsync();
+                    AudioProperties.Title = value;
+                    _ = AudioProperties.SavePropertiesAsync();
                     OnPropertyChanged();
                 }
             }

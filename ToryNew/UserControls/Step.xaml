@@ -13,15 +13,15 @@
     <StackPanel>
         <Border Background="{ThemeResource CardBackgroundFillColorDefault}" CornerRadius="{ThemeResource GridViewItemCornerRadius}">
             <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,0,10,0">
-                <StackPanel Padding="10" Spacing="10">
+                <StackPanel Padding="10" Spacing="{Binding Spacing}">
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Top"  HorizontalAlignment="Left" Spacing="15">
                         <TextBlock Text="{Binding StepNumber}" Opacity="0.6" FontSize="24" FontWeight="SemiBold" VerticalAlignment="Center"/>
                         <TextBlock Text="{Binding Header}" Opacity="0.6" FontWeight="SemiBold" FontSize="18" VerticalAlignment="Center"/>
                     </StackPanel>
-                    <ItemsControl ItemsSource="{Binding Items}">
+                    <ItemsControl x:Name="StepControl" ItemsSource="{Binding Items}" IsEnabled="{Binding IsCurrentStep}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <StackPanel Spacing="10" />
+                                <StackPanel Spacing="{Binding Spacing}" />
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
                     </ItemsControl>

@@ -56,9 +56,10 @@
         </Grid.ColumnDefinitions>
         <!--#endregion Grid Def-->
 
-        <viewer:StepsViewer Grid.Column="0" x:Name="StepsViewer">
+        <viewer:StepsViewer Grid.Column="0" x:Name="StepsViewer" Spacing="12">
             <viewer:StepsViewer.Items>
 
+                <!-- Step 1 -->
                 <usercontrols:Step Header="Files Selection" StepNumber="1" x:Name="Step1">
                     <usercontrols:Step.Items>
                         <labs:SettingsCard HeaderIcon="{ui:FontIcon FontFamily={StaticResource SymbolThemeFontFamily}, Glyph='&#xE8E5;'}" Header="File Browser">
@@ -82,9 +83,10 @@
                     </usercontrols:Step.Items>
                 </usercontrols:Step>
 
-                <usercontrols:Step Header="Files Conversion Settings" StepNumber="2" x:Name="Step2">
+                <!-- Step 2 -->
+                <usercontrols:Step Header="Video Conversion Settings" StepNumber="2" x:Name="Step2">
                     <usercontrols:Step.Items>
-                        <labs:SettingsCard HeaderIcon="{ui:FontIcon FontFamily={StaticResource SymbolThemeFontFamily}, Glyph='&#xE8CB;'}" Header="Format Selection" Description="Select the format you wish the files will converto to">
+                        <labs:SettingsCard HeaderIcon="{ui:FontIcon FontFamily={StaticResource SymbolThemeFontFamily}, Glyph='&#xE8CB;'}" Header="Format Selection" Description="Select the format you wish the files will convert to">
                             <ComboBox x:Name="FormatSelectionCombo" HorizontalAlignment="Right" SelectionChanged="FormatSelectionChanged" />
                         </labs:SettingsCard>
                         <labs:SettingsCard x:Name="PreserveFileSetting" HeaderIcon="{ui:FontIcon FontFamily={StaticResource SymbolThemeFontFamily}, Glyph='&#xE74E;'}" Header="Preserve Files Settings" Description="Will preserve each files settings and will change the format to the selected one (will reduce conversion time)">
@@ -131,6 +133,7 @@
                     </usercontrols:Step.Items>
                 </usercontrols:Step>
 
+                <!-- Step 3 -->
                 <usercontrols:Step Header="Save Folder Location" StepNumber="3" x:Name="Step3">
                     <usercontrols:Step.Items>
                         <labs:SettingsCard HeaderIcon="{ui:FontIcon FontFamily={StaticResource SymbolThemeFontFamily}, Glyph='&#xE8F1;'}" Header="Save Folder">
@@ -151,6 +154,7 @@
                     </usercontrols:Step.Items>
                 </usercontrols:Step>
 
+                <!-- Step 4 -->
                 <usercontrols:Step Header="Start Conversion" StepNumber="4" x:Name="Step4">
                     <usercontrols:Step.Items>
                         <labs:SettingsCard HeaderIcon="{ui:FontIcon FontFamily={StaticResource SymbolThemeFontFamily}, Glyph='&#xE768;'}" Header="Conversion">

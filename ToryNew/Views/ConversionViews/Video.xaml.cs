@@ -3,6 +3,7 @@
 
 using CommunityToolkit.Labs.WinUI;
 using CommunityToolkit.WinUI.UI;
+using CommunityToolkit.WinUI.UI.Controls;
 using FFmpeg.NET;
 using FFmpeg.NET.Enums;
 using FFmpeg.NET.Events;
@@ -12,16 +13,19 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
+using Microsoft.VisualBasic.FileIO;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Mime;
 using System.Threading;
 using System.Threading.Tasks;
 using ToryNew;
 using ToryNew.Assets.FileProperties;
+using ToryNew.Assets.Helper;
 using ToryNew.UserControls;
 using Windows.ApplicationModel;
 using Windows.Graphics.Imaging;
@@ -42,19 +46,17 @@ namespace Tory.Views.ConversionViews {
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     public sealed partial class Video : Page {
-        public int currentStep; // Keeps track of the current step
         public int convertedFiles; // number of converted files
         private IReadOnlyList<StorageFile> files; // list of files
         private ProgressBar progressBar; // the progress bar that will keep track of how many files have been converted (global to change its value outside of an event)
         private TextBlock convertedInfo;
-        private DispatcherQueue dispatcherQueue;
         private CancellationTokenSource cancelSource;
         public ObservableCollection<VideoFileInfo> Images { get; } = new ObservableCollection<VideoFileInfo>();
 
         public Video() {
             this.InitializeComponent();
-            dispatcherQueue = DispatcherQueue.GetForCurrentThread();
-            currentStep = 1;
+
+            StepsViewer.Init(10);
 
             //get and set the formats
             FormatSelectionCombo.Items.Clear();
@@ -63,34 +65,11 @@ namespace Tory.Views.ConversionViews {
 
             //Set the defalt preserve file toggle button
             PreserveFileSettingsToggle.IsOn = true;
-
-            // disable all of the steps other than the first (2 - 4) to prevent changing the settings and starting the conversion before there are any files
-            DisableOrEnable(Step2, false);
-            DisableOrEnable(Step3, false);
-            DisableOrEnable(Step4, false);
         }
 
         // The event for the button that will pick the files in step 1
         public async void BrowseFiles(object sender, RoutedEventArgs e) {
-            // Create the file picker
-            var filePicker = new FileOpenPicker();
-
-            // Get the current window's HWND by passing in the Window object
-            var hwnd = WindowNative.GetWindowHandle(App.Window);
-
-            // Associate the HWND with the file picker
-            InitializeWithWindow.Initialize(filePicker, hwnd);
-
-            //file picker settings
-            filePicker.SuggestedStartLocation = PickerLocationId.VideosLibrary;
-
-            foreach (var en in Enum.GetValues(typeof(VideoFormat)).Cast<VideoFormat>()) {
-                filePicker.FileTypeFilter.Add("." + en.ToString());
-            }
-
-
-            files = await filePicker.PickMultipleFilesAsync();
-            if (files.Count == 0) return;
+            files = await BrowseHelper.BrowseFiles<VideoFormat>();
 
             //Move to Step 2&3
             toStep2and3();
@@ -98,29 +77,7 @@ namespace Tory.Views.ConversionViews {
 
         // The event for the button that will pick the folder in step 1
         public async void BrowseFolder(object sender, RoutedEventArgs e) {
-            var folderPicker = new FolderPicker();
-
-            // Get the current window's HWND by passing in the Window object
-            var hwnd = WindowNative.GetWindowHandle(App.Window);
-
-            // Associate the HWND with the file picker
-            InitializeWithWindow.Initialize(folderPicker, hwnd);
-
-            //folder Picker settings
-            folderPicker.SuggestedStartLocation = PickerLocationId.VideosLibrary;
-            folderPicker.FileTypeFilter.Add("*");
-
-            //pick a folder
-            var folder = await folderPicker.PickSingleFolderAsync();
-
-
-            //if picked a folder continue if not dont go to the next page
-            if (folder == null) return;
-            Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList.AddOrReplace("PickedFolderToken", folder);
-
-            //pick all the files in a directory
-            files = await folder.GetFilesAsync();
-            files.Where(s => { return Enum.GetValues(typeof(VideoFormat)).Cast<string>().ToList().Contains(s.FileType); });
+            files = await BrowseHelper.BrowseFolder<VideoFormat>();
 
             //Move to Step 2&3
             toStep2and3();
@@ -128,56 +85,8 @@ namespace Tory.Views.ConversionViews {
 
         // after picking the folder in which the files will be save then open step 4
         public async void SaveFolder(object sender, RoutedEventArgs e) {
-            var folderPicker = new FolderPicker();
-
-            // Get the current window's HWND by passing in the Window object
-            var hwnd = WindowNative.GetWindowHandle(App.Window);
-
-            // Associate the HWND with the file picker
-            InitializeWithWindow.Initialize(folderPicker, hwnd);
-
-            //folder Picker settings
-            folderPicker.SuggestedStartLocation = PickerLocationId.VideosLibrary;
-            folderPicker.FileTypeFilter.Add("*");
-
-            //pick a folder
-            var folder = await folderPicker.PickSingleFolderAsync();
-
-            //if picked a folder continue if not dont go to the next page
-            if (folder == null) return;
-            Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList.AddOrReplace("PickedFolderToken", folder);
-            saveFolderTextBlock.Text = folder.Path;
-
-            if (currentStep >= 4) return;
-            currentStep = 4;
-            DisableOrEnable(Step4, true);
-        }
-
-        // loop through every Control / TextBlock and Disable/Enable it accordingly, if is StackPanel then do the same method inside of the StackPanel
-        private void DisableOrEnable(Step panel, bool enableOrDisable) {
-            panel.IsEnabled = enableOrDisable;
-        }
-        private void DisableOrEnable(StackPanel panel, bool enableOrDisable) {
-            if (panel == null) return;
-            var controls = panel.Children.Where(s => { return s is Control; });
-            var textBlocks = panel.Children.Where(s => { return s is TextBlock; });
-            var stackPanels = panel.Children.Where(s => { return s is StackPanel; });
-
-            foreach (var c in controls) {
-                if (c is SettingsCard) {
-                    SettingsCard s = (SettingsCard)c;
-                    DisableOrEnable(s.Content as StackPanel, enableOrDisable);
-                }
-                ((Control)c).IsEnabled = enableOrDisable;
-            }
-            foreach (var t in textBlocks) {
-                SolidColorBrush color = new SolidColorBrush();
-                color.Color = enableOrDisable ? Colors.White : Colors.Gray;
-                ((TextBlock)t).Foreground = color;
-            }
-            foreach (var s in stackPanels) {
-                DisableOrEnable((StackPanel)s, enableOrDisable);
-            }
+            saveFolderTextBlock.Text = await BrowseHelper.SaveFolder<VideoFormat>();
+            StepsViewer.ToStep(4);
         }
 
         //Start converting the files display the loading message
@@ -277,7 +186,7 @@ namespace Tory.Views.ConversionViews {
                         VideoCodec = codec,
                         VideoFps = fps,
                         VideoBitRate = bitrateValue * 1000,
-                        VideoSize = (VideoSize)Enum.Parse(typeof(VideoSize), $"Hd{quality}")
+                        VideoSize = (VideoSize)Enum.Parse(typeof(VideoSize), $"Hd{quality}"),
                     };
                 }
 
@@ -325,29 +234,30 @@ namespace Tory.Views.ConversionViews {
         private void FormatSelectionChanged(object sender, RoutedEventArgs e) {
             ComboBox comboBox = (ComboBox)sender;
             VideoFormat selection = (VideoFormat)comboBox.SelectedItem;
-            
+
             if (selection == VideoFormat.GIF) {
                 PreserveFileSetting.IsEnabled = false;
                 PreserveFileSettingsToggle.IsOn = false;
-                DisableOrEnable(NotPreservedSettingsPanel, false);
+                StepHelper.DisableOrEnable(NotPreservedSettingsPanel, false);
             } else if (selection == VideoFormat.WEBM || selection == VideoFormat.WEBP) {
                 if (PreserveFileSettingsToggle == null) return;
                 PreserveFileSetting.IsEnabled = false;
                 PreserveFileSettingsToggle.IsOn = false;
-                DisableOrEnable(NotPreservedSettingsPanel, true);
+                StepHelper.DisableOrEnable(NotPreservedSettingsPanel, true);
             } else {
-                PreserveFileSetting.IsEnabled = currentStep != 1;
-                DisableOrEnable(NotPreservedSettingsPanel, !PreserveFileSettingsToggle.IsOn);
+                PreserveFileSetting.IsEnabled = StepsViewer.CurrentStep != 1;
+                StepHelper.DisableOrEnable(NotPreservedSettingsPanel, !PreserveFileSettingsToggle.IsOn);
             }
         }
 
         private void PreserveFileSettingsToggle_Toggled(object sender, RoutedEventArgs e) {
             //toggle between enabled settings and disabled
-            DisableOrEnable(NotPreservedSettingsPanel, !((ToggleSwitch)sender).IsOn);
+            StepHelper.DisableOrEnable(NotPreservedSettingsPanel, !((ToggleSwitch)sender).IsOn);
         }
 
         private void toStep2and3() {
             //count the files
+            if (files == null) return;
             VideoNumberText.Text = files.Count.ToString();
 
             //show the video selection grid
@@ -356,14 +266,8 @@ namespace Tory.Views.ConversionViews {
             VideoSelectionAdaptiveGrid.SelectedIndex = 0;
 
             //set the current step
-            if (currentStep >= 3) return;
-            currentStep = 3;
-
-            //enable the settings
-            DisableOrEnable(Step2, true);
-            DisableOrEnable(Step3, true);
+            StepsViewer.ToStep(3);
             PreserveFileSetting.IsEnabled = true;
-            DisableOrEnable(NotPreservedSettingsPanel, false);
         }
 
         private async void showVideoSelection() {

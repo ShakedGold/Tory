@@ -17,6 +17,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Xml.Linq;
+using ToryNew.UserControls;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 
@@ -27,33 +28,44 @@ namespace ToryNew.UserViewer {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class StepsViewer : Page, INotifyPropertyChanged {
-        public ObservableCollection<object> Items { get; set; } = new ObservableCollection<object>();
+    public partial class StepsViewer : Page {
+        public ObservableCollection<Step> Items { get; set; } = new ObservableCollection<Step> { };
+        public int Spacing { get; set; }
 
+        private int stepSpacing;
+        public int StepSpacing { 
+            get {
+                return stepSpacing;
+            }
+            set {
+                stepSpacing = value;
+                Step.SetStepSpacing(Items, value);
+            }
+        }
+        
         private int currentStep;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
         public int CurrentStep {
             get {
                 return currentStep;
             }
             set {
                 currentStep = value;
-                SetValue(CurrentStepProperty, value);
+                Step.SetCurrentStep(Items, value);
             }
         }
-
-        public static readonly DependencyProperty CurrentStepProperty = DependencyProperty.Register(
-            "CurrentStep",
-            typeof(int),
-            typeof(StepsViewer),
-            new PropertyMetadata(null)
-        );
 
         public StepsViewer() {
             this.InitializeComponent();
             this.DataContext = this;
+        }
+
+        public void Init(int stepSpacing) {
+            CurrentStep = 1;
+            StepSpacing = stepSpacing;
+        }
+
+        public void ToStep(int toStep) {
+            CurrentStep = toStep > CurrentStep ? toStep : CurrentStep;
         }
     }
 }
