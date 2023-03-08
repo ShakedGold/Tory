@@ -5,7 +5,7 @@ The all in one file converter, from videos to documents, this program can conver
 ## Roadmap
 - [x] Video Conversion Support
 - [ ] Image Conversion Support
-- [ ] Audio Conversion Support
+- [x] Audio Conversion Support
 - [ ] Document Conversion Support
 - [ ] Settings for each format
 - [ ] General Settings
